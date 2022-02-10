@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Main {
 
-    private static int globalCounter = 0;
+ /*   private static int globalCounter = 0;
 
     public static void main(String[] args) {
         List<Thread> threads = new ArrayList<>();
@@ -44,24 +44,32 @@ public class Main {
 //            globalCounter = localCounter;
         }
     }
+*/
+     private static ThreadLocal<String> threadLocal = ThreadLocal.withInitial(() -> "initialValue");
 
-//    private static ThreadLocal<String> threadLocal = ThreadLocal.withInitial(() -> "initialValue");
-//
-//    public static void main(String[] args) {
-//        Thread t1 = new Thread(new MyThread());
-//        Thread t2 = new Thread(new MyThread());
-//
-//        t1.start();
-//        t2.start();
-//    }
-//
-//    static class MyThread implements Runnable {
-//        @Override
-//        public void run() {
-//            int counter = 0;
-//
-//            threadLocal.set("myValue");
-//            threadLocal.get();
-//        }
-//    }
+     public static void main(String[] args) {
+        Thread t1 = new Thread(new MyThread("value1"));
+        Thread t2 = new Thread(new MyThread("value2"));
+
+        t1.start();
+        t2.start();
+    }
+
+     static class MyThread implements Runnable {
+
+         private String value ;
+
+         MyThread(String value){
+               this.value = value;
+         }
+
+        @Override
+         public void run() {
+             int counter = 0;
+
+            threadLocal.set(value);
+           System.out.println( Thread.currentThread().getName() + "  has thread local value of "  +
+                   threadLocal.get());
+        }
+    }
 }
