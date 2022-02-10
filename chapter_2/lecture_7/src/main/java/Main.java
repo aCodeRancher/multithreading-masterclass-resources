@@ -24,6 +24,7 @@ public class Main {
     }
 }
 
+//Define ExceptionHandler as an enum to make it as a singleton
 enum ExceptionHandler implements Thread.UncaughtExceptionHandler {
     INSTANCE;
 
