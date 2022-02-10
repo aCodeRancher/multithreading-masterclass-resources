@@ -24,7 +24,8 @@ public class Main {
     }
 }
 
-class ExceptionHandler implements Thread.UncaughtExceptionHandler {
+enum ExceptionHandler implements Thread.UncaughtExceptionHandler {
+    INSTANCE;
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
@@ -43,7 +44,7 @@ class Watcher implements Runnable {
                 Arrays.stream(inputDirectory.listFiles()).forEach(
                         file -> {
                             Thread t = new Thread(new FileProcessor(file));
-                            t.setUncaughtExceptionHandler(new ExceptionHandler());
+                            t.setUncaughtExceptionHandler(ExceptionHandler.INSTANCE);
                             t.start();
                         }
                 );
