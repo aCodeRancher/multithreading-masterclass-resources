@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
@@ -43,8 +44,18 @@ public class Main {
         @Override
         public void run() {
             for (int i = left; i < right; i++) {
-                if (mutex.tryLock()) {
-                    sum = sum + array[i];
+                try {
+
+                    if (mutex.tryLock(2,TimeUnit.SECONDS)) {
+                         sum = sum + array[i];
+                         System.out.println(Thread.currentThread().getName() + " sum up to " + sum);
+                        TimeUnit.SECONDS.sleep(1);
+                    }
+                }
+                catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+                finally{
                     mutex.unlock();
                 }
             }
