@@ -43,9 +43,10 @@ public class Main {
         @Override
         public void run() {
             for (int i = left; i < right; i++) {
-                mutex.lock();
-                sum = sum + array[i];
-                mutex.unlock();
+                if (mutex.tryLock()) {
+                    sum = sum + array[i];
+                    mutex.unlock();
+                }
             }
         }
     }
