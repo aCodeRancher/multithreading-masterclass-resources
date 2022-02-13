@@ -46,7 +46,7 @@ public class Exercise {
 class BankAccount {
     private int balance;
     private static int maxBalance = 1000 * 10;
-    private int amountAvalibleForWithdraw= 10;
+    private int amountAvailableForWithdraw= 10;
     private Lock lock = new ReentrantLock();
     private Condition condition = lock.newCondition();
 
@@ -67,7 +67,7 @@ class BankAccount {
         System.out.println("Deposit: " + balance);
         //when the balance is bigger than available withdraw
         //amount $10, signal the withdrawing thread.
-        if (balance >= amountAvalibleForWithdraw)
+        if (balance >= amountAvailableForWithdraw)
             condition.signalAll();
 
         lock.unlock();
