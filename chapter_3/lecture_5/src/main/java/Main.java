@@ -3,6 +3,9 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main {
 
@@ -11,8 +14,18 @@ public class Main {
     private static Lock writeLock = readWriteLock.writeLock();
 
     private static List<Integer> list = new ArrayList<>();
+    private static  Logger logger = Logger.getLogger("ReadWriteLock");
+    private static FileHandler handler ;
 
     public static void main(String[] args) {
+
+       try {
+            handler = new FileHandler("write.log", true);
+            logger.addHandler(handler);
+        }
+        catch (Exception e){
+               e.printStackTrace();
+        }
         Thread writer = new Thread(new WriterThread());
 
         Thread reader1 = new Thread(new ReaderThread());
@@ -29,8 +42,9 @@ public class Main {
 
     static class WriterThread implements Runnable {
 
-        @Override
+       @Override
         public void run() {
+
             while(true) {
                 try {
                     writeData();
@@ -43,11 +57,17 @@ public class Main {
         private void writeData() throws InterruptedException {
             Thread.sleep(10000);
 
-            writeLock.lock();
-
+            boolean acquired = writeLock.tryLock();
+            while (true) {
+                if (acquired) {
+                     break;
+                }
+                else{
+                    logger.log(Level.INFO,"Producer waits for write lock.");
+                }
+            }
             int value = (int) (Math.random() * 10);
-            System.out.println("Producing data: " + value);
-
+            logger.log(Level.INFO, "Producing data: "+ value);
             Thread.sleep(3000);
 
             list.add(value);
@@ -60,6 +80,7 @@ public class Main {
 
         @Override
         public void run() {
+
             while(true) {
                 try {
                     readData();
@@ -77,11 +98,11 @@ public class Main {
                 if (acquired) {
                     break;
                 } else {
-                    System.out.println("Waiting for read lock...");
+                     logger.log(Level.INFO,"Waiting for read lock...");
                 }
             }
 
-            System.out.println("List is: " + list);
+            logger.log(Level.INFO, "List is: "+ list);
             readLock.unlock();
         }
     }
