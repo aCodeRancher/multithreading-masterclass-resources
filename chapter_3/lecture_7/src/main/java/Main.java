@@ -22,11 +22,14 @@ public class Main {
 
             Thread t = new Thread(() -> {
                 try {
-                    System.out.println("Executing job " + job.getWork());
+                    System.out.println("Executing job " + job.getWork() + " Available permits: "+ semaphore.availablePermits()
+                     + " at time : " + System.currentTimeMillis());
+
                     Thread.sleep(job.getWork());
 
                     semaphore.release();
-                    System.out.println("Job finished with id " + job.getWork());
+                    System.out.println("Job finished with id " + job.getWork() + " Available permits: "+ semaphore.availablePermits() +
+                            " at time : " + System.currentTimeMillis());
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
