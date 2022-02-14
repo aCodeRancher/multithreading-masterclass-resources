@@ -1,54 +1,43 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
 
-    private static Semaphore semaphore = new Semaphore(2);
-
+    private static Semaphore semaphore = new Semaphore(8);
+    private static  int globalcounter;
     public static void main(String[] args) throws InterruptedException {
 
         Executor executor = new Executor();
+        List<Thread> threadList = new ArrayList<>();
+        for (int i = 0; i< 10; i++) {
+            Thread t =executor.submit( );
+            t.start();
+            threadList.add(t);
+        }
+       threadList.forEach( t -> {
+               try{
+                   t.join();
+                }
+               catch(InterruptedException e){}});
 
-        executor.submit(new Job(4000));
-        executor.submit(new Job(5000));
-        executor.submit(new Job(3000));
+        System.out.println(" global counter: "+ globalcounter);
     }
 
     static class Executor {
-        public void submit(Job job) throws InterruptedException {
-            System.out.println("Launching job " + job.getWork());
-            semaphore.acquire();
-
-            Thread t = new Thread(() -> {
+        public Thread submit( ) throws InterruptedException {
+             semaphore.acquire();
+             Thread t = new Thread(() -> {
                 try {
-                    System.out.println("Executing job " + job.getWork() + " Available permits: "+ semaphore.availablePermits()
-                     + " at time : " + System.currentTimeMillis());
-
-                    Thread.sleep(job.getWork());
-
-                    semaphore.release();
-                    System.out.println("Job finished with id " + job.getWork() + " Available permits: "+ semaphore.availablePermits() +
-                            " at time : " + System.currentTimeMillis());
-
+                      Thread.sleep(1);
+                       Main.globalcounter++;
+                      semaphore.release();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             });
 
-            t.start();
-        }
-    }
-
-    static class Job {
-        private final int work;
-
-        public Job(int work) {
-            this.work = work;
-        }
-
-        public int getWork() {
-            return work;
+           return t;
         }
     }
 }
