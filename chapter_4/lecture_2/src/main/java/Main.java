@@ -3,6 +3,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Phaser;
 
 public class Main {
 
@@ -20,8 +21,7 @@ public class Main {
             {144, 144, 144, 145},
     };
 
-    private static final CyclicBarrier cyclicBarrier = new CyclicBarrier(4, () -> System.out.println("The barrier was released!"));
-
+    private static  Phaser phaser = new Phaser(4 );
     public static void main(String[] args) throws InterruptedException {
         List<Thread> threads = new ArrayList<>();
 
@@ -34,7 +34,6 @@ public class Main {
         for (Thread thread : threads) {
             thread.join();
         }
-
         System.out.println("The final array: " + Arrays.deepToString(array));
     }
 
@@ -42,9 +41,7 @@ public class Main {
 
         private final int columnId;
 
-        public WorkerThread(int columnId) {
-            this.columnId = columnId;
-        }
+        public WorkerThread(int columnId) {this.columnId = columnId; }
 
         @Override
         public void run() {
@@ -56,13 +53,12 @@ public class Main {
                 }
 
                 array[i][columnId] = array[i][columnId] + S;
-
-                try {
-                    cyclicBarrier.await();
-                } catch (InterruptedException | BrokenBarrierException e) {
-                    e.printStackTrace();
-                }
+                //wait for the rest of the threads to complete
+                phaser.arriveAndAwaitAdvance();
             }
+            //de-register the phase when this thread finishes its tasks :
+            //calculate the new values for its column.
+            phaser.arriveAndDeregister();
         }
     }
 }
