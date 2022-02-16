@@ -6,16 +6,31 @@ public class Main {
 
         Thread t = new Thread(() -> {
             try {
-                String receivedValue = exchanger.exchange("value1");
+                Thread.currentThread().setName("Alice");
+                String receivedValue = exchanger.exchange("Hello Bob");
                 System.out.println("Received: " + receivedValue + " in thread " + Thread.currentThread().getName());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
 
-        t.start();
+        Thread t1 = new Thread(()->{
+             try{
+                 Thread.currentThread().setName("Bob");
+                 String receivedValue = exchanger.exchange("Hi Alice");
+                 System.out.println("Received: "+ receivedValue + " in thread " + Thread.currentThread().getName());
+             }
+             catch(InterruptedException e){
+                 e.printStackTrace();
+             }
+        });
 
-        String receivedValue = exchanger.exchange("value2");
+
+
+        t.start();
+        t1.start();
+
+        String receivedValue = exchanger.exchange("Good morning classmates");
         System.out.println("Received: " + receivedValue + " in thread " + Thread.currentThread().getName());
     }
 }
