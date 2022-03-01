@@ -1,6 +1,5 @@
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.*;
 
 public class Main {
 
@@ -33,16 +32,17 @@ public class Main {
 
         long start = System.nanoTime();
 
-        quickSort(0, arraySize - 1);
+     //   quickSort(0, arraySize - 1);
 
-//        ForkJoinPool forkJoinPool = new ForkJoinPool();
-//        ForkJoinTask<Void> future = forkJoinPool.submit(new QuickSortTask(0, arraySize - 1));
+       ForkJoinPool forkJoinPool = new ForkJoinPool();
+       System.out.println("Level of parallelism: " +forkJoinPool.getParallelism());
+        ForkJoinTask<Void> future = forkJoinPool.submit(new QuickSortTask(0, arraySize - 1));
 //
-//        future.get();
+        future.get();
 
         long end = System.nanoTime();
-
-        System.out.println("Execution time = " + (end - start));
+        long duration = end-start;
+        System.out.println("Execution time = " + TimeUnit.SECONDS.convert(duration,TimeUnit.NANOSECONDS));
 
 
 //        System.out.println(Arrays.toString(array));
