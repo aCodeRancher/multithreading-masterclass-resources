@@ -42,17 +42,19 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         initMatrixes();
 
-//        printMatrix(A);
-//        printMatrix(B);
+      //  printMatrix(A);
+      //   printMatrix(B);
 
         long start = System.nanoTime();
         multiplyParallelPerBlock();
-//        multiplySerial();
+       // multiplyParallel();
+       //multiplySerial();
         long end = System.nanoTime();
 
-        System.out.println("Execution time = " + (end - start));
+        long duration = end-start;
+        System.out.println("Execution time = " + TimeUnit.SECONDS.convert(duration, TimeUnit.NANOSECONDS));
 
-        checkResult();
+      //  checkResult();
 
 //        printMatrix(C);
     }
