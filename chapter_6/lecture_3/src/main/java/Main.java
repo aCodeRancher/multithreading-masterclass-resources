@@ -53,8 +53,7 @@ public class Main {
 
         long duration = end-start;
         System.out.println("Execution time = " + TimeUnit.SECONDS.convert(duration, TimeUnit.NANOSECONDS));
-
-      //  checkResult();
+        checkResult();
 
 //        printMatrix(C);
     }
