@@ -17,7 +17,7 @@ public class RowMultiplyWorker implements Runnable {
         @Override
         public void run() {
             result[row][col]=0;
-            for (int i = 0; i < matrix1.length; i++) {
+            for (int i = 0; i < matrix1[0].length; i++) {
                  result[row][col] += matrix1[row][i] * matrix2[i][col];
                 }
         }
