@@ -7,17 +7,20 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Main {
 
     private static Lock lock = new ReentrantLock();
-    private static Condition condition = lock.newCondition();
-    private static Condition condition1 = lock.newCondition();
+    private static Condition condition= lock.newCondition();
+   // private static Condition conditionnotfull = lock.newCondition();
 
     public static void main(String[] args) {
         Queue<String> queue = new LinkedList<>();
 
         Thread producer = new Thread(new Producer(queue));
         Thread consumer = new Thread(new Consumer(queue));
+        Thread consumer1 = new Thread(new Consumer(queue));
 
         producer.start();
         consumer.start();
+        consumer1.start();
+
     }
 
     static class Producer implements Runnable {
@@ -40,7 +43,7 @@ public class Main {
 
         private void produceData() throws InterruptedException {
             lock.lock();
-            if (queue.size() == 10) {
+            while (queue.size() == 10) {
                 System.out.println("In producer, waiting...");
                 condition.await();
             }
@@ -51,7 +54,7 @@ public class Main {
             queue.add("element_" + queue.size());
 
             if (queue.size() == 1) {
-                condition.signal();
+                condition.signalAll();
             }
             lock.unlock();
         }
@@ -78,18 +81,18 @@ public class Main {
 
         private void consumeData() throws InterruptedException {
             lock.lock();
-            if (queue.isEmpty()) {
-                System.out.println("Consumer is waiting...");
+            while (queue.isEmpty()) {
+                System.out.println(Thread.currentThread().getName() + " consumer is waiting...");
                 condition.await();
             }
 
             Thread.sleep(700);
 
             String data = queue.remove();
-            System.out.println("Consumed data: " + data);
+            System.out.println( Thread.currentThread().getName() + " consumed data: " + data + " current queue size " + queue.size());
 
             if (queue.size() == 9) {
-                condition.signal();
+                condition.signalAll();
             }
             lock.unlock();
         }
