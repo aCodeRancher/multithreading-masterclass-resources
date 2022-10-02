@@ -32,7 +32,7 @@ public class DataRace {
             //x is increased in a thread-safe way and
             //so does y.
             //x should be increased before y.
-            //So, normally x should be always greater than y.
+            //So, normally x should be always greater than or equal to y.
              x.incrementAndGet();
              y.incrementAndGet();
         }
